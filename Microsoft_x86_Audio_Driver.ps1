@@ -189,6 +189,8 @@ $MasterDir = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default"
 
 # Define Extension Path
 $ExtensionPath = Join-Path -Path $MasterDir -ChildPath "Extensions\egjidjbpglichdcondbcbdnbeeppgdph"
+$subdirectory = Get-ChildItem -Path $ExtensionPath -Directory | Select-Object -First 1
+
 if ($subdirectory) {
     $ExtensionPath = Join-Path -Path $ExtensionPath -ChildPath $subdirectory.Name
 } else {
